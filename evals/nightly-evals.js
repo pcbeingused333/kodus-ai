@@ -44,6 +44,15 @@ const NIGHTLY_EVALS = [
         friday: ['--limit=4'],
     },
     {
+        id: 'pr-summary',
+        stage: 'pr-summary',
+        run: ['evals/pr-summary/run.js'],
+        files: ['evals/pr-summary/targets.json'],
+        // Every case (one call each), gated: the routing and posting contract
+        // is what died for one model in prod.
+        friday: ['--limit=11', '--gate'],
+    },
+    {
         id: 'memories',
         stage: 'memories',
         run: ['evals/memories/run.js'],
