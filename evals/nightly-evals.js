@@ -43,6 +43,13 @@ const NIGHTLY_EVALS = [
         files: ['evals/format/targets.json'],
         friday: ['--limit=4'],
     },
+    {
+        id: 'memories',
+        stage: 'memories',
+        run: ['evals/memories/run.js'],
+        files: ['evals/memories/targets.json'],
+        friday: ['--limit=4'],
+    },
 ];
 
 const byId = (id) => NIGHTLY_EVALS.find((e) => e.id === id) || null;
