@@ -85,7 +85,8 @@ describe('evals/shared/nightly-verdict.js', () => {
 describe('evals/shared/nightly-plan.js', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nightly-plan-'));
     const e = NIGHTLY_EVALS[0];
-    fs.writeFileSync(path.join(dir, `${e.id}.txt`), `${e.run[0]}\nlibs/x/engine.ts\n`);
+    const ids = NIGHTLY_EVALS.map((x: { id: string }) => x.id);
+    for (const x of NIGHTLY_EVALS) fs.writeFileSync(path.join(dir, `${x.id}.txt`), `${x.run[0]}\nlibs/x/engine.ts\n`);
     const changed = (files: string[]) => {
         const f = path.join(dir, 'changed.txt');
         fs.writeFileSync(f, `${files.join('\n')}\n`);
@@ -93,12 +94,12 @@ describe('evals/shared/nightly-plan.js', () => {
     };
 
     it('measures an eval whose files changed, a forced night, no baseline or an unknown diff, and skips the rest', () => {
-        expect(plan({ filesDir: dir, changedFile: changed(['libs/x/engine.ts']), base: 'abc' })).toEqual([e.id]);
+        expect(plan({ filesDir: dir, changedFile: changed(['libs/x/engine.ts']), base: 'abc' })).toEqual(ids);
         expect(plan({ filesDir: dir, changedFile: changed(['README.md']), base: 'abc' })).toEqual([]);
         expect(plan({ filesDir: dir, changedFile: changed([e.files[0]]), base: 'abc' })).toEqual([e.id]);
-        expect(plan({ filesDir: dir, changedFile: changed(['README.md']), base: 'abc', force: true })).toEqual([e.id]);
-        expect(plan({ filesDir: dir, changedFile: changed(['README.md']), base: '' })).toEqual([e.id]);
-        expect(plan({ filesDir: dir, changedFile: path.join(dir, 'missing.txt'), base: 'abc' })).toEqual([e.id]);
+        expect(plan({ filesDir: dir, changedFile: changed(['README.md']), base: 'abc', force: true })).toEqual(ids);
+        expect(plan({ filesDir: dir, changedFile: changed(['README.md']), base: '' })).toEqual(ids);
+        expect(plan({ filesDir: dir, changedFile: path.join(dir, 'missing.txt'), base: 'abc' })).toEqual(ids);
     });
 
     it('refuses to decide on a list without its runner', () => {
